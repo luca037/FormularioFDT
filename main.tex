@@ -1,0 +1,416 @@
+\documentclass{article}
+\usepackage[landscape]{geometry}
+\usepackage{url}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathmorphing}
+\usepackage{amsmath,amssymb}
+
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+
+% my command
+\DeclareMathOperator*{\argmax}{argmax}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\advance\topmargin-.8in
+\advance\textheight3in
+\advance\textwidth3in
+\advance\oddsidemargin-1.5in
+\advance\evensidemargin-1.5in
+\parindent0pt
+\parskip2pt
+
+\begin{document}
+\begin{multicols*}{3}
+
+\tikzstyle{mybox} = [draw=black, fill=white, very thick,
+    rectangle, inner sep=10pt, inner ysep=10pt]
+\tikzstyle{fancytitle} =[fill=black, text=white, font=\bfseries]
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+    Un vettore $b$ di $k$ bit di informazione viene codificato in un vettore $c$ lungo $n$ bit che
+    costituisce una parola di codice, con $n>k$. Si ha che $c_m$ è sempre una parola di codice,
+    mentre $\tilde{c_m}$ non è detto che lo sia. Dato $b \to c$, $C$ l'insieme delle parole di codice, si ha che:
+    \[
+        \begin{split}
+            P[C] & = P[\hat b = b] = \sum_{c_i \in C} P[\hat b = b | c = c_i] P[c=c_i] \\ 
+            c & =
+            \underbrace{\argmax_{\alpha \in C} P[\hat c = \beta | c = \alpha ] P[c=\alpha]}_{\text{Criterio MAP}}=\\ 
+              &\stackrel{\text{se }P[c=\alpha] = 1/|C|}{=} 
+              \underbrace{\argmax_{\alpha \in C} P[\hat c = \beta | c = \alpha]}_{\text{Criterio ML}}
+        \end{split}
+    \]
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codifica a blocchi};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+    Senza memoria: la probabilità di errore non dipende dai bit inviati precedentemente,
+    quindi la probabilità di ricevere la sequenza $010$ è data $p_x(0)p_x(1)p_x(0)$.
+    Simmetrico: la probabilità di sbagliare un 1 con uno 0 è uguale alla probabilità di 
+    sbagliare uno 0 con un 1, cioè: $P(y=0 | x = 1) = P(y = 1 | x = 0)$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Canale BSC};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Si definisce $d_H(a, b) = \#$ di posizioni che hanno valori differenti 
+        nelle due sequenze.
+        \[
+            P[\hat c = \beta | c = \alpha] = P_e^{d_H(\alpha, \beta)}(1-P_e)^{n-d_H(\alpha, \beta)}\\
+        \]
+        \[
+            \hat c = \argmax_{\alpha \in C}\left( \frac{P_{bit}}{1-P_{bit}} \right)^{d_H(\alpha, \beta)}
+            \stackrel{P_{bit} < 0.5}{=} 
+            \argmax_{\alpha \in C}d_H(\alpha, \beta)
+        \]
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Distanza di Hamming};
+\end{tikzpicture}
+
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        In un codice a blocco si ha che:
+        \begin{itemize}
+            \item $\#$ max errori sempre rilevabili $= d_{min} - 1$;
+            \item $\#$ max errori sempre correggibili $= \lfloor \frac{d_{min} - 1}{2} \rfloor$
+    \end{itemize}
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Numero di errori rilevabili e correggibili};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Sia $t$ il numero di errori che voglio correggere.
+        \[
+            \underbrace{\frac{k}{n}}_{\text{Rate del codice}}
+            \leq 1 - \frac 1 n \log_2 \sum_{r=0}^t \binom{n}{r}
+        \]
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Bound di Hamming};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Permettono di costruire parole di codice in maniera algebrica.
+        Se $C$ è un codice lineare a blocco, allora deve valere che 
+        $\forall c_i, c_j \in C$:
+        \[
+            (c_i+c_j)\in C,\quad (\beta_i c_i + \beta_j c_j)\in C,\quad \beta \in \left\{ 0,1 \right\}
+        \]
+        \textbf{Norma / Peso di Hamming:} $\norm{x}_H=\#$ di 1 presenti nella sequenza.
+        In un codice lineare a blocco, il peso di Hamming del codice coincide
+        con la distanza minima di Hamming del codice, ovvero $d_{min}= W_H(C)$.
+        \textbf{Bound di Singleton:} $d_{min} = n-k+1$, fissa un upper bound alla
+        distanza minima del codice (per codici lineari a blocco).
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codice lineare a blocco};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        La matrice generatrice $\pmb G$ mappa blocchi di bit $b$ in ingresso in parole di codice
+        $c$ secondo la regola $\pmb{c=G\,b}$. Deve valere: $\text{Rango}(\pmb G) = k$.\\
+        Per rappresentare tutte le parole di codice non lineare serve una tabella
+        di $n\cdot 2^k$ bit; se il codice è lineare basta una matrice di $n\cdot k$ bit.\\
+        Una matrice è in forma sistematica se $\pmb G = \begin{bmatrix} \mathbb{I}_k\\ \pmb A \end{bmatrix}$\\
+        Matrice controllo di parità: $\pmb H = \begin{bmatrix} \pmb A & \mathbb{I}_{n-k} \end{bmatrix}$.
+        Deve valere: Rango$(\pmb H) = n-k$.\\
+        Si ha che: $\pmb{HG} = \underline 0$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Rappresentazione matriciale dei codici lineari};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Solitamente il bit di parità pari è un codice lineare a blocco; il codice
+        a parità dispari non è lineare perché non ha l'elemento identicamente nullo
+        $\underline 0$.
+        Codice di parità pari con $n=4, k=3$:
+        \[
+            \pmb G =
+            \begin{bmatrix}
+                1 & 0 & 0 \\
+                0 & 1 & 0 \\
+                0 & 0 & 1 \\
+                1 & 1 & 1 \\
+            \end{bmatrix}
+            \quad
+            \pmb H =
+            \begin{bmatrix}
+                1 & 1 & 1 & 1\\
+            \end{bmatrix}
+        \]
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codice con bit di parità};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Sia $\pmb{\sigma = H \gamma}$ la sindrome, dove $\gamma$ è un vettore di $n$ bit.
+        $\pmb \sigma = 0 \Leftrightarrow \gamma \in C$, altrimenti si cerca il 
+        coset relativo (sequenze $\varepsilon$ che portano alla stessa sindrome) 
+        e si sceglie un elemento con peso di Hamming minimo $\varepsilon_{min}(\pmb \sigma)$
+        detto coset leader.
+        $\hat c = \gamma + \varepsilon_{min}(\pmb \sigma)$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Decodifica tramite sindrome};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Matrice generatrice del codice di Hamming $(7,4)$:
+        \[
+            \pmb G =
+            \begin{bmatrix}
+                1 & 0 & 0 & 0\\
+                0 & 1 & 0 & 0\\
+                0 & 0 & 1 & 0\\
+                0 & 0 & 0 & 1\\
+                1 & 0 & 1 & 1\\
+                1 & 1 & 0 & 1\\
+                1 & 1 & 1 & 0\\
+            \end{bmatrix}
+            \quad
+            \pmb H =
+            \begin{bmatrix}
+                1 & 0 & 1 & 1 & 1 & 0 & 0\\
+                1 & 1 & 0 & 1 & 0 & 1 & 0\\
+                1 & 1 & 1 & 0 & 0 & 0 & 1\\
+            \end{bmatrix}
+        \]
+        Nella matrice $\pmb H$ si trovano tutte le sequenze non nulle di $n-k$ bit.
+        Il numero di colonne è $n=2^{n-k}-1$.
+        I codici di Hamming soddisfano il bound di Hamming all'uguaglianza e
+        hanno $d_{min} = 3$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codice di Hamming};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        \textbf{Assiomi informazione.} Sono: $i(A) \geq 0$; $P(A)\leq P(B)
+        \Leftrightarrow i(A) \geq i(B)$; $i(\Omega) = 0$; se $A,B$ indipendenti
+        $\Rightarrow i(A\cap B) = i(A) + i(B)$. L'insieme delle funzioni che soddisfa 
+        gli assiomi è $i(A) = -\log_2 P(A) = \log_2 1/P(A)$. 
+        L'unità di misura è il bit.\\
+        \textbf{Entropia.} Data $X$ v.a. discreta l'entropia è
+        \[
+            \begin{split}
+                H(X) = E_x[i_X(X)] = \sum_{a\in A_x}p_X(a) i_X(a)\\
+                0 \stackrel{X\,\text{deterministica}}{\leq}  H(X) \stackrel{X\,\text{uniforme}}{\leq} \log_2 M \quad M = |A_x|
+            \end{split}
+        \]
+        \textbf{Entropia congiunta.}
+        $H(X,Y) = E[i_{X,Y}(X,Y)]$.
+        \[
+            \begin{split}
+                & 0 \stackrel{X,Y\,\text{determ.}}{\leq}\text{max }\left\{ \underbrace{H(X)}_{Y\,\text{func determ. di } X} ,\overbrace{H(Y)}^{X\,\text{func determ. di } Y} \right\} \\
+                & \leq H(X,Y) \stackrel{X,Y\,\text{indip}}{\leq} H(X)+H(Y)
+            \end{split}
+        \]
+        \textbf{Entropia condizionata.} 
+        \[
+            \begin{split}
+                H(X|Y=b) = \sum_a -p_{x|y}(a|b)\log_2 p_{x|y}(a|b)\\
+                H(X|Y) = E_y[H(X|Y=y] = H(X,Y) - H(Y)\\
+                0 \stackrel{X,Y\,\text{determ.}}{\leq} H(X|Y) \stackrel{X,Y\,\text{indip.}}{\leq} H(X)
+            \end{split}
+        \]
+        \textbf{Informazione tra due var aleatorie.}$I(X;Y) = H(X)+H(Y)-H(X,Y)=
+        H(X)-H(X|Y) =H(Y)-H(Y|X) = I(Y;X)$.
+        \[
+            0 \stackrel{X,Y\,\text{indip.}}{\leq} I(X;Y) \stackrel{X|Y\,\text{determ.}}{\leq} \text{min}\left\{ H(X), H(Y) \right\}
+        \]
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Teoria dell'informazione (pt 1)};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        \textbf{Vettore aleatorio.} $\underline x = [X_1,...,X_N]$ dove $X_n$ 
+        sono var aleatorie discrete, spesso hanno tutte stesso alfabeto.
+        \emph{Densità di probabilità:} $p_{\underline {x}}(\underline a) =
+        P(X_1 = a_1, ..., X_N=a_n)$.
+        \emph{Funzione informazione:} $i_{\underline x}(\underline a) =
+        - \log_2 p_{\underline x}(\underline a)$.
+        \emph{Entropia per simbolo:} $H_s(\underline x) = \frac{H(\underline x)}{N}$
+        con $N$ lunghezza vettore.
+        \[
+            0 \leq H_s(\underline x) \stackrel{X_n\, \text{i.i.d.}}{\leq} H(X_n) \leq \log_2 M
+        \]
+        \emph{Entropia per simbolo di una sorgente sempre attiva:} $H_s(\underline x) =
+        \lim_{N\to \infty}\frac{H(\underline x)}{2N+1}$, se v.a. i.i.d $H_s=H(X_n)$.
+        \emph{Informazione mutua:}
+        $I(\underline x; \underline y) = H(\underline x) + H(\underline y) - H(\underline x, \underline y)$.
+        \emph{Informazione mutua per simbolo:} 
+        $I_s(\underline x; \underline y) = H_s(\underline x) + H_s(\underline y) - H_s(\underline x, \underline y)$.\\
+        \textbf{Tasso info messaggio o information rate.}
+        Informazione utile che esce da una sorgente, $R(\underline x) = \frac{1}{T}H_s(\underline x)$
+        dove $T$ periodo di simbolo.
+        \emph{Tasso nominale di informazione:} è tasso massimo di informazione, è dato da
+        $R_N(\underline x) = \frac{1}{T} \log_2 M$.\\
+        \textbf{Tasso di info di un canale M-ario} $\mathcal G$. 
+        $R_{\mathcal G} = \frac{1}{T} I_s(\underline x; \underline y)$, 
+        dipende dalla densità di probabilità
+        dell'ingresso.
+        Se il canale è \textbf{senza memoria} allora
+        $R_{\mathcal G} = \frac{1}{T} I(\underline x; \underline y)$, 
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Teoria dell'informazione (pt 2)};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        \textbf{Capacità di un canale M-ario.} Definita come il massimo 
+        tasso di informazione del canale, scegliendo opportunamente la densità di prob
+        dell'ingresso.
+        \[
+            C = \max_{\left\{ p_x \right\}} R(\mathcal G) 
+            = \max_{\left\{ p_x \right\}}\frac{I_s(\underline x;\underline y)}{T}
+            \stackrel{\text{se no memoria}}{=} 
+            \max_{\left\{ p_x \right\}}\frac{I(x;y)}{T}
+        \]
+        \textbf{Capacità canale binario simmetrico senza memoria.}
+        Ottenuta con l'ingresso $x$ uniforme.
+        \[
+            C=\frac{1}{T_b} \left[ 1 - \left( P_{bit} \log_2 \frac{1}{P_{bit}} + (1-P_{bit}) \log_2 \frac{1}{1-P_{bit}}\right) \right]
+        \]
+        \textbf{Capacità canale con ingresso binario e con erasure.}
+        Ottenuta con l'ingresso $x$ uniforme. $C = \frac{1-\alpha}{T}$.
+        Dove $\alpha$ è la probabilità di cancellazione. Per piccoli valori di $\alpha$,
+        la capacità è maggiore rispetto a quella del canale binario simmetrico senza
+        memoria.
+        \textbf{Capacità canale AWGN.} 
+        $C=\frac{1}{2T} \log_2(1+\sigma_{S_{Tx}^2}/\sigma_w^2)$, dove $S_{Tx}(t)$ deve
+        avere una distribuzione gaussiana.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Capacità di canale};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Consideriamo un canale $M-$ario senza memoria con periodo di simbolo $T$ 
+        e capacità $C$.
+        Sia $\left\{ b_l \right\}$ una sorgente di simboli con tasso di informazione
+        nominale del messaggio $R_N$.
+        Se $R_N<C$ allora $\forall \delta > 0$ e $\forall n$ suff grande $\exists$
+        un codice con $\lceil 2^{nRT} \rceil$ parole lunghe $n$ e lettere dell'alfabeto
+        $M-$ario e con probabilità di errore sulla parola che è $P(\hat c \neq c) < \delta$.
+        \\
+        In un codice binario allora si ha che $2^k = 2^{nRT} \Rightarrow 
+        \frac{k}{n} = RT<CT = \max_{\left\{ p_{\underline x} \right\}}I_s(\underline x; \underline y)$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Teorema di Shannon per la codifica di canale};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        L'obiettivo è quello di rendere più compatto il messaggio in uscita dalla
+        sorgente.
+        Il codificatore fa corrispondere a ciascuna parola in $\pmb {\mathcal D_x}$
+        una parola in $\pmb{\mathcal D_y}$, dove $\mathcal D$ sono detti dizionari.
+        Chiamiamo $\pmb{M_y}$ l'alfabeto delle parole $\underline y$.
+        Sia $\pmb{L(\underline y)}$ la lunghezza della parola $\underline y$;
+        definiamo $\pmb{L_y}=\sum_{\underline a\in \mathcal{D}_x}p_{\underline x}
+        (\underline a)L(\underline{y}(\underline a))$ la lunghezza media delle parole di codice
+        in uscita dal codificatore.
+        \textbf{Codice a prefisso.} Un codice a prefisso è un codice di sorgente
+        che non ha nessuna parola di codice che è prefisso di altre parole di codice.\\
+        \textbf{Teorema di Shannon per la codifica di sorgente.}
+        Ogni codice di sorgente soddisfa: $L_y \geq \frac{H(\underline x)}{\log_2M_y}$.
+        Esiste un codice a prefisso che soddisfa: $L_y \leq \frac{H(\underline x)}{\log_2M_y} + 1$.\\
+        \textbf{Codifica di sorgente ottima.} Una codifica di sorgente è ottima se ha $L_y$ più
+        piccola possibile (rispettando sempre il teorema di Shannon).
+        \emph{Teorema:} per un codice a prefisso ottimo, parole di codice a più bassa
+        probabilità hanno lunghezza maggiore.
+        \emph{Teorema:} nel dizionario di un codice a prefisso ottimo, ci sono almeno
+        due parole di codice che hanno lunghezza massima e differiscono per un bit.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codifica di sorgente (pt 1)};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        \textbf{Codice di Shannon-Fano.} 
+        $l_i = \lceil \log_{1/M_y} p_{\underline x}(\underline {a}_i)\rceil\quad \underline{a}_i\in \mathcal{D}_x$.
+        Se le probabilità sono tutte potenze intere di $1/M_y$ allora è ottimo e $L_y$ 
+        raggiunge il lower bound del teorema di Shannon.\\
+        \textbf{Procedura di Huffman.} Permette di costruire un codice di sorgente
+        binario ottimo a partire dalla $p_{\underline x}(\underline{a}_i)$ dell'ingresso.
+        Non garantisce $L_y $ uguale lower bound di Shannon.\\
+        \textbf{Codifica aritmetica - Elias.} 
+        Il calcolo delle parole di codice è computazionalmente molto meno costoso
+        rispetto ad Huffman.
+        $l_i =\lceil i(\underline{a}_i) \rceil + 1$.
+        La $L_y$ coincide alla lunghezza media del codice di S-F più 1.
+        \emph{Procedura:} divido l'intervallo $[0,1]$ in $|\mathcal{D}_x|$ sotto-intervalli
+        ognuno di lunghezza pari alla probabilità del simbolo associato;
+        trovo il punto medio $m_i$ dell'intervallo; codifico in binario $m_1$ (es: $m_i=0.11001$);
+        $\underline{y}_i =$ primi $l_i$ bit di $m_i$ (es: $l_i=4 \Rightarrow \underline{y}_i = 1100$).\\
+        \textbf{Efficienza di un codice di sorgente.} $\eta=H(X)/(L_y\log_2M_y)$, $\eta \in [0,1]$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Codifica di sorgente (pt 2)};
+\end{tikzpicture}
+\end{multicols*}
+\end{document}
