@@ -375,7 +375,7 @@
         che non ha nessuna parola di codice che è prefisso di altre parole di codice.\\
         \textbf{Teorema di Shannon per la codifica di sorgente.}
         Ogni codice di sorgente soddisfa: $L_y \geq \frac{H(\underline x)}{\log_2M_y}$.
-        Esiste un codice a prefisso che soddisfa: $L_y \leq \frac{H(\underline x)}{\log_2M_y} + 1$.\\
+        Esiste un codice a prefisso che soddisfa: $L_y < \frac{H(\underline x)}{\log_2M_y} + 1$.\\
         \textbf{Codifica di sorgente ottima.} Una codifica di sorgente è ottima se ha $L_y$ più
         piccola possibile (rispettando sempre il teorema di Shannon).
         \emph{Teorema:} per un codice a prefisso ottimo, parole di codice a più bassa
@@ -412,5 +412,17 @@
 };
 \node[fancytitle, right=10pt] at (box.north west) {Codifica di sorgente (pt 2)};
 \end{tikzpicture}
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        \textbf{Var aleatorie congiunte discrete.} Se $(X,Y)$ v.a. congiunta discreta, allora
+        $p_X(a) = \sum_{b\in A_y} p_{X,Y}(a,b) = \sum_{b\in A_y}p_Y(b) p_{X|Y}(a|b)$;
+        $p_Y(b) = \sum_{a\in A_x} p_{X,Y}(a,b) = \sum_{a\in A_x}p_X(a) p_{Y|X}(b|a)$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Probabilità};
+\end{tikzpicture}
+
 \end{multicols*}
 \end{document}
