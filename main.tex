@@ -47,9 +47,9 @@
         \begin{split}
             P[C] & = P[\hat b = b] = \sum_{c_i \in \mathcal C} P[\hat b = b | c = c_i] P[c=c_i] \\ 
             \hat c & =
-            \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ] P[c=\alpha]}_{\text{Criterio MAP}}=\\ 
+            \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ] P[c=\alpha]}_{\text{Criterio MAP (sempre)}}=\\ 
               &\stackrel{\text{se }P[c=\alpha] = 1/|\mathcal C|}{=} 
-              \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ]}_{\text{Criterio ML}}
+              \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ]}_{\text{Criterio ML (parole equiprobabili)}}
         \end{split}
     \]
     Per non avere accumuli o ritardi deve valere $kT_b =nT_c$, quindi $T_c < T_b$.
