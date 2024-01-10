@@ -267,14 +267,19 @@
         \]
         \textbf{Entropia condizionata.} 
         \[
-            \begin{split}
                 H(X|Y=b) = \sum_a -p_{x|y}(a|b)\log_2 p_{x|y}(a|b)\\
-                H(X|Y) = E_y[H(X|Y=y] = H(X,Y) - H(Y)\\
-                0 \stackrel{X,Y\,\text{determ.}}{\leq} H(X|Y) \stackrel{X,Y\,\text{indip.}}{\leq} H(X)
+        \]
+        \[
+            \begin{split}
+                H(X|Y) & = E_y[H(X|Y=y)] = \sum_{b}p_Y(b)H(X|Y=b)\\
+                       & = H(X,Y) - H(Y)
             \end{split}
         \]
-        \textbf{Informazione tra due var aleatorie.}$I(X;Y) = H(X)+H(Y)-H(X,Y)=
-        H(X)-H(X|Y) =H(Y)-H(Y|X) = I(Y;X)$.
+        \[
+                0 \stackrel{X,Y\,\text{determ.}}{\leq} H(X|Y) \stackrel{X,Y\,\text{indip.}}{\leq} H(X)
+        \]
+        \textbf{Informazione tra due var aleatorie.} 
+        $I(X;Y) = H(X)+H(Y)-H(X,Y)= H(X)-H(X|Y) =H(Y)-H(Y|X) = I(Y;X)$.
         \[
             0 \stackrel{X,Y\,\text{indip.}}{\leq} I(X;Y) \leq \text{min}\left\{ \underbrace{H(X)}_{X|Y\,\text{determ.}}, \overbrace{H(Y)}^{Y|X\,\text{determ.}} \right\}
         \]
@@ -435,7 +440,9 @@
         Se $X,Y$ sono indipendenti $p_{X,Y}(a,b) = p_X(a)p_Y(b)$.
         \emph{Prob marginali:}
         $p_X(a) = \sum_{b\in A_y} p_{X,Y}(a,b) = \sum_{b\in A_y}p_Y(b) p_{X|Y}(a|b)$,
-        $p_Y(b) = \sum_{a\in A_x} p_{X,Y}(a,b) = \sum_{a\in A_x}p_X(a) p_{Y|X}(b|a)$.
+        $p_Y(b) = \sum_{a\in A_x} p_{X,Y}(a,b) = \sum_{a\in A_x}p_X(a) p_{Y|X}(b|a)$.\\
+        \textbf{Probbilità di errore media (matrice transizione).}
+        $P_{X\neq Y} = \sum_{a\neq b} p_{X,Y}(a,b) = \sum_{a\neq b} p_{X}(a)p_{Y|X}(b|a)$.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Probabilità};
@@ -452,7 +459,7 @@
         Sia $E_h$ l'energia della base, $E_n = |\underline{\alpha}_n|^2 E_h/2$ l'energia
         del segnale $n-$esimo, si ha che l'energia media è $E_s = (M-1)E_h/3$.
         La \emph{probabilità di errore} è data da 
-        $P[E] <= 4(1-1/\sqrt{M})Q(\sqrt{E_h/(2\sigma_I^2)}) 
+        $P[E] \leq 4(1-1/\sqrt{M})Q(\sqrt{E_h/(2\sigma_I^2)}) 
         = 4(1-1/\sqrt{M})Q(\sqrt{(3E_s)/[(M-1)2\sigma_I^2]})$.
         \emph{Probabilità di errore sul Bit:} $P_{bit}\approx P[E]/\log_2 M$ usando
         la mappatura di Gray per righe e colonne.
