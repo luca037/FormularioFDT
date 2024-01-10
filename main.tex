@@ -19,6 +19,7 @@
 
 % my command
 \DeclareMathOperator*{\argmax}{argmax}
+\DeclareMathOperator*{\argmin}{argmin}
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
 \advance\topmargin-.8in
@@ -41,16 +42,17 @@
     \begin{minipage}{0.3\textwidth}
     Un vettore $b$ di $k$ bit di informazione viene codificato in un vettore $c$ lungo $n$ bit che
     costituisce una parola di codice, con $n>k$. Si ha che $c_m$ è sempre una parola di codice,
-    mentre $\tilde{c_m}$ non è detto che lo sia. Dato $b \to c$, $C$ l'insieme delle parole di codice, si ha che:
+    mentre $\tilde{c_m}$ non è detto che lo sia. Dato $b \to c$, $\mathcal C$ l'insieme delle parole di codice, si ha che:
     \[
         \begin{split}
-            P[C] & = P[\hat b = b] = \sum_{c_i \in C} P[\hat b = b | c = c_i] P[c=c_i] \\ 
-            c & =
-            \underbrace{\argmax_{\alpha \in C} P[\hat c = \beta | c = \alpha ] P[c=\alpha]}_{\text{Criterio MAP}}=\\ 
-              &\stackrel{\text{se }P[c=\alpha] = 1/|C|}{=} 
-              \underbrace{\argmax_{\alpha \in C} P[\hat c = \beta | c = \alpha]}_{\text{Criterio ML}}
+            P[C] & = P[\hat b = b] = \sum_{c_i \in \mathcal C} P[\hat b = b | c = c_i] P[c=c_i] \\ 
+            \hat c & =
+            \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ] P[c=\alpha]}_{\text{Criterio MAP}}=\\ 
+              &\stackrel{\text{se }P[c=\alpha] = 1/|\mathcal C|}{=} 
+              \underbrace{\argmax_{\alpha \in \mathcal C} P[\tilde c = \beta | c = \alpha ]}_{\text{Criterio ML}}
         \end{split}
     \]
+    Per non avere accumuli o ritardi deve valere $kT_b =nT_c$, quindi $T_c < T_b$.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Codifica a blocchi};
@@ -60,9 +62,9 @@
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
-    Senza memoria: la probabilità di errore non dipende dai bit inviati precedentemente,
+    \emph{Senza memoria:} la probabilità di errore non dipende dai bit inviati precedentemente,
     quindi la probabilità di ricevere la sequenza $010$ è data $p_x(0)p_x(1)p_x(0)$.
-    Simmetrico: la probabilità di sbagliare un 1 con uno 0 è uguale alla probabilità di 
+    \emph{Simmetrico}: la probabilità di sbagliare un 1 con uno 0 è uguale alla probabilità di 
     sbagliare uno 0 con un 1, cioè: $P(y=0 | x = 1) = P(y = 1 | x = 0)$.
     \end{minipage}
 };
@@ -76,18 +78,19 @@
         Si definisce $d_H(a, b) = \#$ di posizioni che hanno valori differenti 
         nelle due sequenze.
         \[
-            P[\hat c = \beta | c = \alpha] = P_e^{d_H(\alpha, \beta)}(1-P_e)^{n-d_H(\alpha, \beta)}\\
+            P[\tilde c = \beta | c = \alpha] = P_e^{d_H(\alpha, \beta)}(1-P_e)^{n-d_H(\alpha, \beta)}\\
         \]
         \[
-            \hat c = \argmax_{\alpha \in C}\left( \frac{P_{bit}}{1-P_{bit}} \right)^{d_H(\alpha, \beta)}
+            \hat c = \argmax_{\alpha \in \mathcal C}\left( \frac{P_{bit}}{1-P_{bit}} \right)^{d_H(\alpha, \beta)}
             \stackrel{P_{bit} < 0.5}{=} 
-            \argmax_{\alpha \in C}d_H(\alpha, \beta)
+            \argmin_{\alpha \in \mathcal C}d_H(\alpha, \beta)
         \]
+        Abbiamo definito il Criterio MD, valido se il canale è BSC senza memoria 
+        e parole di codice equiprobabili.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Distanza di Hamming};
 \end{tikzpicture}
-
 
 
 \begin{tikzpicture}
@@ -102,14 +105,14 @@
 };
 \node[fancytitle, right=10pt] at (box.north west) {Numero di errori rilevabili e correggibili};
 \end{tikzpicture}
-
+\\
 
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
         Sia $t$ il numero di errori che voglio correggere.
         \[
-            \underbrace{\frac{k}{n}}_{\text{Rate del codice}}
+            \underbrace{k/n}_{\text{Rate del codice}}
             \leq 1 - \frac 1 n \log_2 \sum_{r=0}^t \binom{n}{r}
         \]
     \end{minipage}
@@ -122,19 +125,27 @@
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
         Permettono di costruire parole di codice in maniera algebrica.
-        Se $C$ è un codice lineare a blocco, allora deve valere che 
-        $\forall c_i, c_j \in C$:
+        Se $\mathcal C$ è un codice lineare a blocco, allora deve valere che 
+        $\forall c_i, c_j \in \mathcal C$:
         \[
-            (c_i+c_j)\in C,\quad (\beta_i c_i + \beta_j c_j)\in C,\quad \beta \in \left\{ 0,1 \right\}
+            (c_i+c_j)\in \mathcal C,\quad (\beta_i c_i + \beta_j c_j)\in \mathcal C,\quad \beta \in \left\{ 0,1 \right\}
         \]
         \textbf{Norma / Peso di Hamming:} $\norm{x}_H=\#$ di 1 presenti nella sequenza.
-        In un codice lineare a blocco, il peso di Hamming del codice coincide
-        con la distanza minima di Hamming del codice, ovvero $d_{min}= W_H(C)$.
-        \textbf{Bound di Singleton:} $d_{min} = n-k+1$, fissa un upper bound alla
-        distanza minima del codice (per codici lineari a blocco).
+        In un codice lineare a blocco, il \emph{peso di Hamming del codice} coincide
+        con la distanza minima di Hamming del codice, ovvero $d_{min}= W_H(\mathcal C)$.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Codice lineare a blocco};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        In un codice lineare a blocco si ha che $d_{min} \leq n-k+1$.
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {Bound di Singleton};
 \end{tikzpicture}
 
 
@@ -145,48 +156,48 @@
         $c$ secondo la regola $\pmb{c=G\,b}$. Deve valere: $\text{Rango}(\pmb G) = k$.\\
         Per rappresentare tutte le parole di codice non lineare serve una tabella
         di $n\cdot 2^k$ bit; se il codice è lineare basta una matrice di $n\cdot k$ bit.\\
-        Una matrice è in forma sistematica se $\pmb G = \begin{bmatrix} \mathbb{I}_k\\ \pmb A \end{bmatrix}$\\
+        Una matrice è in forma sistematica se $\pmb G = \begin{bmatrix} \mathbb{I}_k\\ \pmb A \end{bmatrix}$.
+        In questo caso si ha che $W_H(\mathcal{C})=$ peso di Hamming minimo delle colonne.\\
         Matrice controllo di parità: $\pmb H = \begin{bmatrix} \pmb A & \mathbb{I}_{n-k} \end{bmatrix}$.
-        Deve valere: Rango$(\pmb H) = n-k$.\\
-        Si ha che: $\pmb{HG} = \underline 0$.
+        Deve valere: Rango$(\pmb H) = n-k$ e $\pmb{HG} = \underline 0$.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Rappresentazione matriciale dei codici lineari};
 \end{tikzpicture}
 
 
-\begin{tikzpicture}
-\node [mybox] (box){%
-    \begin{minipage}{0.3\textwidth}
-        Solitamente il bit di parità pari è un codice lineare a blocco; il codice
-        a parità dispari non è lineare perché non ha l'elemento identicamente nullo
-        $\underline 0$.
-        Codice di parità pari con $n=4, k=3$:
-        \[
-            \pmb G =
-            \begin{bmatrix}
-                1 & 0 & 0 \\
-                0 & 1 & 0 \\
-                0 & 0 & 1 \\
-                1 & 1 & 1 \\
-            \end{bmatrix}
-            \quad
-            \pmb H =
-            \begin{bmatrix}
-                1 & 1 & 1 & 1\\
-            \end{bmatrix}
-        \]
-    \end{minipage}
-};
-\node[fancytitle, right=10pt] at (box.north west) {Codice con bit di parità};
-\end{tikzpicture}
+%\begin{tikzpicture}
+%\node [mybox] (box){%
+%    \begin{minipage}{0.3\textwidth}
+%        Solitamente il bit di parità pari è un codice lineare a blocco; il codice
+%        a parità dispari non è lineare perché non ha l'elemento identicamente nullo
+%        $\underline 0$.
+%        Codice di parità pari con $n=4, k=3$:
+%        \[
+%            \pmb G =
+%            \begin{bmatrix}
+%                1 & 0 & 0 \\
+%                0 & 1 & 0 \\
+%                0 & 0 & 1 \\
+%                1 & 1 & 1 \\
+%            \end{bmatrix}
+%            \quad
+%            \pmb H =
+%            \begin{bmatrix}
+%                1 & 1 & 1 & 1\\
+%            \end{bmatrix}
+%        \]
+%    \end{minipage}
+%};
+%\node[fancytitle, right=10pt] at (box.north west) {Codice con bit di parità};
+%\end{tikzpicture}
 
 
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
         Sia $\pmb{\sigma = H \gamma}$ la sindrome, dove $\gamma$ è un vettore di $n$ bit.
-        $\pmb \sigma = 0 \Leftrightarrow \gamma \in C$, altrimenti si cerca il 
+        $\pmb \sigma = 0 \Leftrightarrow \gamma \in \mathcal C$, altrimenti si cerca il 
         coset relativo (sequenze $\varepsilon$ che portano alla stessa sindrome) 
         e si sceglie un elemento con peso di Hamming minimo $\varepsilon_{min}(\pmb \sigma)$
         detto coset leader.
@@ -195,6 +206,7 @@
 };
 \node[fancytitle, right=10pt] at (box.north west) {Decodifica tramite sindrome};
 \end{tikzpicture}
+\\
 
 
 \begin{tikzpicture}
@@ -233,11 +245,11 @@
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
-        \textbf{Assiomi informazione.} Sono: $i(A) \geq 0$; $P(A)\leq P(B)
-        \Leftrightarrow i(A) \geq i(B)$; $i(\Omega) = 0$; se $A,B$ indipendenti
-        $\Rightarrow i(A\cap B) = i(A) + i(B)$. L'insieme delle funzioni che soddisfa 
-        gli assiomi è $i(A) = -\log_2 P(A) = \log_2 1/P(A)$. 
-        L'unità di misura è il bit.\\
+        % \textbf{Assiomi informazione.} Sono: $i(A) \geq 0$; $P(A)\leq P(B)
+        % \Leftrightarrow i(A) \geq i(B)$; $i(\Omega) = 0$; se $A,B$ indipendenti
+        % $\Rightarrow i(A\cap B) = i(A) + i(B)$. L'insieme delle funzioni che soddisfa 
+        % gli assiomi è $i(A) = -\log_2 P(A) = \log_2 1/P(A)$. 
+        % L'unità di misura è il bit.\\
         \textbf{Entropia.} Data $X$ v.a. discreta l'entropia è
         \[
             \begin{split}
@@ -264,7 +276,7 @@
         \textbf{Informazione tra due var aleatorie.}$I(X;Y) = H(X)+H(Y)-H(X,Y)=
         H(X)-H(X|Y) =H(Y)-H(Y|X) = I(Y;X)$.
         \[
-            0 \stackrel{X,Y\,\text{indip.}}{\leq} I(X;Y) \stackrel{X|Y\,\text{determ.}}{\leq} \text{min}\left\{ H(X), H(Y) \right\}
+            0 \stackrel{X,Y\,\text{indip.}}{\leq} I(X;Y) \leq \text{min}\left\{ \underbrace{H(X)}_{X|Y\,\text{determ.}}, \overbrace{H(Y)}^{Y|X\,\text{determ.}} \right\}
         \]
     \end{minipage}
 };
@@ -302,7 +314,7 @@
         dipende dalla densità di probabilità
         dell'ingresso.
         Se il canale è \textbf{senza memoria} allora
-        $R_{\mathcal G} = \frac{1}{T} I(\underline x; \underline y)$, 
+        $R_{\mathcal G} = \frac{1}{T} I(X_n; Y_n)$, 
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Teoria dell'informazione (pt 2)};
@@ -318,21 +330,21 @@
         \[
             C = \max_{\left\{ p_x \right\}} R(\mathcal G) 
             = \max_{\left\{ p_x \right\}}\frac{I_s(\underline x;\underline y)}{T}
-            \stackrel{\text{se no memoria}}{=} 
-            \max_{\left\{ p_x \right\}}\frac{I(x;y)}{T}
+            \stackrel{\text{no memoria}}{=} 
+            \max_{\left\{ p_x \right\}}\frac{I(X;Y)}{T}
         \]
         \textbf{Capacità canale binario simmetrico senza memoria.}
-        Ottenuta con l'ingresso $x$ uniforme.
+        Ottenuta con l'ingresso $X$ uniforme.
         \[
             C=\frac{1}{T_b} \left[ 1 - \left( P_{bit} \log_2 \frac{1}{P_{bit}} + (1-P_{bit}) \log_2 \frac{1}{1-P_{bit}}\right) \right]
         \]
         \textbf{Capacità canale con ingresso binario e con erasure.}
-        Ottenuta con l'ingresso $x$ uniforme. $C = \frac{1-\alpha}{T}$.
+        Ottenuta con l'ingresso $X$ uniforme. $C = \frac{1-\alpha}{T}$.
         Dove $\alpha$ è la probabilità di cancellazione. Per piccoli valori di $\alpha$,
         la capacità è maggiore rispetto a quella del canale binario simmetrico senza
         memoria.
         \textbf{Capacità canale AWGN.} 
-        $C=\frac{1}{2T} \log_2(1+\sigma_{S_{Tx}^2}/\sigma_w^2)$, dove $S_{Tx}(t)$ deve
+        $C=\frac{1}{2T} \log_2(1+\sigma_{S_{Tx}}^2/\sigma_w^2)$, dove $S_{Tx}(t)$ deve
         avere una distribuzione gaussiana.
     \end{minipage}
 };
@@ -351,7 +363,7 @@
         un codice con $\lceil 2^{nRT} \rceil$ parole lunghe $n$ e lettere dell'alfabeto
         $M-$ario e con probabilità di errore sulla parola che è $P(\hat c \neq c) < \delta$.
         \\
-        In un codice binario allora si ha che $2^k = 2^{nRT} \Rightarrow 
+        In un codice binario si ha che $2^k = 2^{nRT} \Rightarrow 
         \frac{k}{n} = RT<CT = \max_{\left\{ p_{\underline x} \right\}}I_s(\underline x; \underline y)$.
     \end{minipage}
 };
@@ -405,7 +417,7 @@
         La $L_y$ coincide alla lunghezza media del codice di S-F più 1.
         \emph{Procedura:} divido l'intervallo $[0,1]$ in $|\mathcal{D}_x|$ sotto-intervalli
         ognuno di lunghezza pari alla probabilità del simbolo associato;
-        trovo il punto medio $m_i$ dell'intervallo; codifico in binario $m_1$ (es: $m_i=0.11001$);
+        trovo il punto medio $m_i$ dell'intervallo; codifico in binario $m_i$ (es: $m_i=0.11001$);
         $\underline{y}_i =$ primi $l_i$ bit di $m_i$ (es: $l_i=4 \Rightarrow \underline{y}_i = 1100$).\\
         \textbf{Efficienza di un codice di sorgente.} $\eta=H(X)/(L_y\log_2M_y)$, $\eta \in [0,1]$.
     \end{minipage}
@@ -413,15 +425,43 @@
 \node[fancytitle, right=10pt] at (box.north west) {Codifica di sorgente (pt 2)};
 \end{tikzpicture}
 
+
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
-        \textbf{Var aleatorie congiunte discrete.} Se $(X,Y)$ v.a. congiunta discreta, allora
-        $p_X(a) = \sum_{b\in A_y} p_{X,Y}(a,b) = \sum_{b\in A_y}p_Y(b) p_{X|Y}(a|b)$;
+        \textbf{Var aleatorie congiunte discrete.} Siano$(X,Y)$ v.a. congiunta discreta.
+        \emph{Prob congiunta:}
+        $p_{X,Y}(a,b) = p_X(a) p_{Y|X}(b,a) =p_Y(a) p_{X|Y}(a,b)$. 
+        Se $X,Y$ sono indipendenti $p_{X,Y}(a,b) = p_X(a)p_Y(b)$.
+        \emph{Prob marginali:}
+        $p_X(a) = \sum_{b\in A_y} p_{X,Y}(a,b) = \sum_{b\in A_y}p_Y(b) p_{X|Y}(a|b)$,
         $p_Y(b) = \sum_{a\in A_x} p_{X,Y}(a,b) = \sum_{a\in A_x}p_X(a) p_{Y|X}(b|a)$.
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Probabilità};
+\end{tikzpicture}
+
+
+\begin{tikzpicture}
+\node [mybox] (box){%
+    \begin{minipage}{0.3\textwidth}
+        Dati $\alpha_{n,I},\alpha_{n,Q} \in \{2l-L-1,\,l= 1,...,L\}$ con $L=\sqrt M$
+        e data la base ortonormale, si ha che il segnale generico nello spazio 
+        euclideo è $\underline{s}_n = [\alpha_{n,I}\sqrt{E_h/2}, \alpha_{n,Q}\sqrt{E_h/2}]$.
+        La distanza minima tra due segnali è $\sqrt{2E_h}$.
+        Sia $E_h$ l'energia della base, $E_n = |\underline{\alpha}_n|^2 E_h/2$ l'energia
+        del segnale $n-$esimo, si ha che l'energia media è $E_s = (M-1)E_h/3$.
+        La \emph{probabilità di errore} è data da 
+        $P[E] <= 4(1-1/\sqrt{M})Q(\sqrt{E_h/(2\sigma_I^2)}) 
+        = 4(1-1/\sqrt{M})Q(\sqrt{(3E_s)/[(M-1)2\sigma_I^2]})$.
+        \emph{Probabilità di errore sul Bit:} $P_{bit}\approx P[E]/\log_2 M$ usando
+        la mappatura di Gray per righe e colonne.
+        Una \emph{base ortonormale} è data da 
+        $\phi_1=\sqrt{2/E_h}h_{T_x}(t)\cos(2\pi f_0t+\phi_0)$,
+        $\phi_2=-\sqrt{2/E_h}h_{T_x}(t)\sin(2\pi f_0t+\phi_0)$ ($\cos \perp \sin$).
+    \end{minipage}
+};
+\node[fancytitle, right=10pt] at (box.north west) {QAM};
 \end{tikzpicture}
 
 \end{multicols*}
