@@ -196,12 +196,13 @@
 \begin{tikzpicture}
 \node [mybox] (box){%
     \begin{minipage}{0.3\textwidth}
-        Sia $\pmb{\sigma = H \gamma}$ la sindrome, dove $\gamma$ è un vettore di $n$ bit.
+        Sia $\pmb{\sigma = H \gamma}$ la sindrome, dove $\gamma$ è un vettore di $n$ bit; dipende solo dalla sequenza di errore $\epsilon$, ci sono $2^n$ possibili sequenze di errore.
         $\pmb \sigma = 0 \Leftrightarrow \gamma \in \mathcal C$, altrimenti si cerca il 
         coset relativo (sequenze $\varepsilon$ che portano alla stessa sindrome) 
         e si sceglie un elemento con peso di Hamming minimo $\varepsilon_{min}(\pmb \sigma)$
         detto coset leader.
         $\hat c = \gamma + \varepsilon_{min}(\pmb \sigma)$.
+        Il numero di coset coincide con il numero di sindromi diverse, ovvero $\#coset=2^{\#bit\_sindrome}=2^{n-k}$. 
     \end{minipage}
 };
 \node[fancytitle, right=10pt] at (box.north west) {Decodifica tramite sindrome};
